@@ -1,0 +1,68 @@
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+USE ieee.std_logic_unsigned.ALL;
+
+ENTITY demux_1x8_tb IS
+END demux_1x8_tb;
+
+ARCHITECTURE testbench OF demux_1x8_tb IS
+    
+    COMPONENT demux_1x8_bycustomstruct
+        PORT (
+            A       : IN  STD_LOGIC;
+            Input_1 : IN  STD_LOGIC;
+            Input_2 : IN  STD_LOGIC;
+            Input_3 : IN  STD_LOGIC;
+            S0      : OUT STD_LOGIC;
+            S1      : OUT STD_LOGIC;
+            S2      : OUT STD_LOGIC;
+            S3      : OUT STD_LOGIC;
+            S4      : OUT STD_LOGIC;
+            S5      : OUT STD_LOGIC;
+            S6      : OUT STD_LOGIC;
+            S7      : OUT STD_LOGIC
+        );
+    END COMPONENT;
+
+    -- Signals for input and output
+    SIGNAL A, Input_1, Input_2, Input_3 : STD_LOGIC := '0';
+    SIGNAL S0, S1, S2, S3, S4, S5, S6, S7 : STD_LOGIC;
+
+BEGIN
+    
+    -- Instantiate the Unit Under Test (UUT)
+    uut: demux_1x8_bycustomstruct PORT MAP (
+        A       => A,
+        Input_1 => Input_1,
+        Input_2 => Input_2,
+        Input_3 => Input_3,
+        S0      => S0,
+        S1      => S1,
+        S2      => S2,
+        S3      => S3,
+        S4      => S4,
+        S5      => S5,
+        S6      => S6,
+        S7      => S7
+    );
+
+    -- Process to apply test vectors
+    stim_proc: PROCESS
+    BEGIN
+        FOR i IN 0 TO 15 LOOP  -- Iterate through all possible select inputs
+            A        <= '1';  -- Ensure A is always 1 to activate the demux
+            Input_1  <= STD_LOGIC'VAL((i/4) MOD 2);
+            Input_2  <= STD_LOGIC'VAL((i/2) MOD 2);
+            Input_3  <= STD_LOGIC'VAL(i MOD 2);
+            
+            WAIT FOR 10 ns;
+        END LOOP;
+        
+        A <= '0';  -- Deactivate A to ensure all outputs are 0
+        WAIT FOR 10 ns;
+        
+        REPORT "Testbench completed!";
+        WAIT;
+    END PROCESS;
+
+END testbench;
